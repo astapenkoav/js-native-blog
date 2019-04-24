@@ -1,13 +1,20 @@
 export function renderPost(post, options = {}) {
-    const tag = post.type === 'news'
-        ? '<li class="tag tag-blue tag-rounded">Новость</li>'
-        : '<li class="tag tag-rounded">Заметка</li>'
+  const tag =
+    post.type === 'news'
+      ? '<li class="tag tag-blue tag-rounded">Новость</li>'
+      : '<li class="tag tag-rounded">Заметка</li>';
 
-    const button = (JSON.parse(localStorage.getItem('favorites')) || []).includes(post.id)
-        ? `<button data-id="${post.id}" class="button-round button-small button-danger">Удалить из Избранного</button>`
-        : `<button data-id="${post.id}" class="button-round button-small button-primary">В Избранное</button>`
+  const button = (JSON.parse(localStorage.getItem('favorites')) || []).find(
+    item => item.id === post.id
+  )
+    ? `<button data-id="${
+        post.id
+      }" class="button-round button-small button-danger">Удалить из Избранного</button>`
+    : `<button data-id="${
+        post.id
+      }" class="button-round button-small button-primary">В Избранное</button>`;
 
-    return `
+  return `
         <div class="panel">
             <div class="panel-head">
                 <p class="panel-title">${post.title}</p>
@@ -23,5 +30,5 @@ export function renderPost(post, options = {}) {
                 ${options.withButton ? button : ''}
             </div>
         </div>
-    `
+    `;
 }

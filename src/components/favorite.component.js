@@ -1,51 +1,61 @@
-import { Component } from "../core/component"
-import { apiService } from "../services/api.service"
-import { renderPost } from '../templates/post.template'
+import { Component } from '../core/component';
+import { apiService } from '../services/api.service';
+import { renderPost } from '../templates/post.template';
 
 export class FavoriteComponent extends Component {
-    constructor(id, { loader}) {
-        super(id);
-        this.loader = loader;
-    }
+  constructor(id, { loader }) {
+    super(id);
+    this.loader = loader;
+  }
 
-    init() {
-        this.$el.addEventListener('click', linkClickHandler.bind(this));
-    }
+  init() {
+    this.$el.addEventListener('click', linkClickHandler.bind(this));
+  }
 
-    onShow() {
-        const favorites = JSON.parse(localStorage.getItem('favorites'));
-        const html = renderList(favorites);
-        this.$el.insertAdjacentHTML('afterbegin', html);
-    }
+  onShow() {
+    const favorites = JSON.parse(localStorage.getItem('favorites'));
+    const html = renderList(favorites);
+    this.$el.insertAdjacentHTML('afterbegin', html);
+  }
 
-    onHide() {
-        this.$el.innerHTML = '';
-    }
+  onHide() {
+    this.$el.innerHTML = '';
+  }
 }
 
 function renderList(list = []) {
-    if (list && list.length) {
-        return `
+  if (list && list.length) {
+    return `
             <ul>
-                ${list.map(item => `<li><a href="#" class="js-link">${item}</a></li>`).join(' ')}
+                ${list
+                  .map(
+                    item =>
+                      `<li><a href="#" class="js-link" data-id="${item.id}">${
+                        item.title
+                      }</a></li>`
+                  )
+                  .join(' ')}
             </ul>
-        `
-    }
+        `;
+  }
 
-    return `<p class="center">Вы пока ничего не добавили</p>`
+  return `<p class="center">Вы пока ничего не добавили</p>`;
 }
 
 function linkClickHandler(event) {
-    event.preventDefault();
+  event.preventDefault();
 
-    if (event.target.classList.contains('js-link')) {
-        const postId = event.target.textContent;
+  if (event.target.classList.contains('js-link')) {
+    const postId = event.target.dataset.id;
 
-        this.$el.innerHTML = '';
-        this.loader.show();
-        apiService.getPostById(postId).then(post => {
-            this.$el.insertAdjacentHTML('afterbegin', renderPost(post, { withButton: false}));
-            this.loader.hide();
-        });
-    }
+    this.$el.innerHTML = '';
+    this.loader.show();
+    apiService.getPostById(postId).then(post => {
+      this.$el.insertAdjacentHTML(
+        'afterbegin',
+        renderPost(post, { withButton: false })
+      );
+      this.loader.hide();
+    });
+  }
 }
